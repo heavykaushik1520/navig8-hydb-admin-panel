@@ -1,0 +1,41 @@
+.w-200 {
+  min-width: 200px;
+}
+
+.w-250 {
+  min-width: 250px;
+}
+
+.w-350 {
+  min-width: 350px;
+}
+
+.w-150 {
+  min-width: 150px;
+}
+
+.table-wrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+
+.table-wrapper table {
+  width: 100% !important;
+  min-width: 1800px !important;
+  border-collapse: collapse !important;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+  white-space: nowrap !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+}
+
+@media (min-width: 1400px) {
+    .container{
+        max-width: 100% !important;
+    }
+}
+
