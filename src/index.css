@@ -1,3 +1,7 @@
+body {
+  background-color: #dbebef !important;
+}
+
 .w-200 {
   min-width: 200px;
 }
@@ -34,8 +38,71 @@
 }
 
 @media (min-width: 1400px) {
-    .container{
-        max-width: 100% !important;
-    }
+  .container {
+    max-width: 100% !important;
+  }
 }
 
+.thead-bg {
+  background-color: #4dc5e4 !important;
+  color: #333 !important;
+}
+
+
+.glow-btn {
+  background: linear-gradient(135deg, #4dc5e4, #2aa3c4);
+  border: none;
+  color: white;
+  padding: 12px 30px;
+  border-radius: 25px;
+  font-weight: bold;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.glow-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(77, 197, 228, 0.7),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.glow-btn:hover::before {
+  left: 100%;
+}
+
+.glow-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 15px 30px rgba(77, 197, 228, 0.6);
+}
+
+.heading {
+  color: #1badd4;
+}
+
+.table-striped>tbody>tr:nth-of-type(even)>*{
+  background-color: #d9f0f6;
+}
+
+.mt-100 {
+  margin-top: 100px !important;
+}
+
+.sticky-sidebar {
+  position: sticky !important;
+  top: 100px !important;  
+  height: calc(100vh - 120px) !important ; 
+  overflow-y: auto !important; 
+}

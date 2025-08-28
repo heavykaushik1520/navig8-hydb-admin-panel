@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
+import { FaEdit } from "react-icons/fa";
 
 function Visitors() {
   const { logout } = useAuth();
@@ -17,7 +19,11 @@ function Visitors() {
   const [eventDay, setEventDay] = useState("Day1");
 
   const API_URL = import.meta.env.VITE_API_URL;
+  const navigate = useNavigate(); // Initialize useNavigate
 
+  const handleEditClick = (id) => {
+    navigate(`/edit-visitor/${id}`);
+  };
 
   const fetchSearchResults = async () => {
     try {
@@ -41,7 +47,6 @@ function Visitors() {
         }
 
         if (res.status === 404) {
-          // ✅ Clear visitors if no matches found
           setVisitors([]);
           setPagination({
             totalItems: 0,
@@ -49,7 +54,7 @@ function Visitors() {
             currentPage: 1,
             itemsPerPage: 0,
           });
-          return; // stop here
+          return;
         }
 
         throw new Error("Failed to fetch search results");
@@ -65,7 +70,6 @@ function Visitors() {
       });
     } catch (err) {
       console.error("Error fetching search results:", err);
-      // Optional: also clear visitors on unexpected error
       setVisitors([]);
     } finally {
       setLoading(false);
@@ -115,19 +119,43 @@ function Visitors() {
   };
 
   const handleSearchSubmit = (e) => {
-  e.preventDefault();
-  if (searchQuery.trim() === "") {
-    fetchVisitorsByEventDay(1, pagination.itemsPerPage);
-  } else {
-    fetchSearchResults();
-  }
-};
+    e.preventDefault();
+    if (searchQuery.trim() === "") {
+      fetchVisitorsByEventDay(1, pagination.itemsPerPage);
+    } else {
+      fetchSearchResults();
+    }
+  };
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-3 text-center fw-bold">NAVIG8 VISION DIRECTORY</h1>
+      <h1 className="mb-3 text-center fw-bold heading">
+        NAVIG8 VISION DIRECTORY
+      </h1>
 
-      {/* SEARCH BUTTON */}
+      <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
+        <Link
+          to="/structural-spectrum"
+          className="btn glow-btn fw-bold text-uppercase"
+        >
+          Structural Spectrum
+        </Link>
+
+        <Link
+          to="/prestige-and-panache"
+          className="btn glow-btn fw-bold text-uppercase"
+        >
+          Prestige & Panache
+        </Link>
+
+        <Link
+          to="/innovation-sphere"
+          className="btn glow-btn fw-bold text-uppercase"
+        >
+          Innovation Sphere
+        </Link>
+      </form>
+
       <form
         className="d-flex justify-content-center mb-3 search-bar"
         onSubmit={handleSearchSubmit}
@@ -139,12 +167,11 @@ function Visitors() {
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <button className="btn btn-primary" type="submit">
+        <button className="btn glow-btn fw-bold" type="submit">
           Search
         </button>
       </form>
 
-      {/* FILTERATION DAY 1 & DAY 2 */}
       <div className="d-flex justify-content-between align-items-center mb-3">
         <select
           className="form-select w-auto"
@@ -183,7 +210,6 @@ function Visitors() {
         </div>
       </div>
 
-      {/* Pagination */}
       <nav aria-label="Page navigation">
         <ul className="pagination">
           <li
@@ -228,45 +254,53 @@ function Visitors() {
         </ul>
       </nav>
 
-      {/* Visitors Table */}
       <div className="table-responsive mt-3">
         {loading ? (
           <div className="text-center p-3 ">Loading...</div>
         ) : (
           <table className="table table-striped table-bordered table-hover">
-            <thead className="table-dark">
+            <thead className=" thead-bg">
               <tr>
-                <th>Image</th>
-                <th className="w-200">Visitor Profile</th>
-                <th>Visitor Profile Other</th>
-                <th className="w-200">Company Name</th>
-                <th className="w-200">Contact Person</th>
-                <th className="w-200">Designation</th>
-                <th>Mobile Number</th>
-                <th className="w-350">Address</th>
-                <th>Email</th>
-                <th>Website</th>
-                <th>Personal Insta</th>
-                <th>Company Insta</th>
-                <th>Personal Linkedin</th>
-                <th>Company Linkedin</th>
-                <th>Project Types</th>
-                <th className="w-200">Project Location</th>
-                <th>Expected Start Date</th>
-                <th className="w-200">Project Size</th>
-                <th className="w-350">Projects 2026</th>
-                <th className="w-350">Structural Spectrum</th>
-                <th className="w-350">Prestige Panache</th>
-                <th className="w-350">Innovation Sphere</th>
-                <th className="w-350">Preferred Suppliers</th>
-                <th className="w-350">Challenges</th>
-                <th className="w-350">Vision</th>
+                <th className="thead-bg">Action</th> {/* New Action column */}
+                <th className="thead-bg">Image</th>
+                <th className="w-200 thead-bg">Visitor Profile</th>
+                <th className="w-200 thead-bg">Visitor Profile Other</th>
+                <th className="w-200 thead-bg">Company Name</th>
+                <th className="w-200 thead-bg">Contact Person</th>
+                <th className="w-200 thead-bg">Designation</th>
+                <th className="thead-bg">Mobile Number</th>
+                <th className="w-350 thead-bg">Address</th>
+                <th className="thead-bg">Email</th>
+                <th className="w-200 thead-bg">Website</th>
+                <th className="w-350 thead-bg">Personal Insta</th>
+                <th className="w-350 thead-bg">Company Insta</th>
+                <th className="w-350 thead-bg">Personal Linkedin</th>
+                <th className="w-350 thead-bg">Company Linkedin</th>
+                <th className="w-350 thead-bg">Project Types</th>
+                <th className="w-200 thead-bg">Project Location</th>
+                <th className="thead-bg">Expected Start Date</th>
+                <th className="w-200 thead-bg">Project Size</th>
+                <th className="w-350 thead-bg">Projects 2026</th>
+                <th className="w-350 thead-bg">Structural Spectrum</th>
+                <th className="w-350 thead-bg">Prestige Panache</th>
+                <th className="w-350 thead-bg">Innovation Sphere</th>
+                <th className="w-350 thead-bg">Preferred Suppliers</th>
+                <th className="w-350 thead-bg">Challenges</th>
+                <th className="w-350 thead-bg">Vision</th>
               </tr>
             </thead>
             <tbody>
               {visitors.length > 0 ? (
                 visitors.map((v) => (
                   <tr key={v.id}>
+                    <td>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => handleEditClick(v.id)}
+                      >
+                        <FaEdit />
+                      </button>
+                    </td>
                     <td>
                       {v.image ? (
                         <img
