@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { IoMdDownload } from "react-icons/io";
 
 function StructuralSpectrum() {
   const { logout } = useAuth();
@@ -14,26 +15,26 @@ function StructuralSpectrum() {
     currentPage: 1,
     itemsPerPage: 10,
   });
-  const [selectedOption, setSelectedOption] = useState("Cement");
+  const [selectedOption, setSelectedOption] = useState("Bricks and Blocks");
   const [errorMessage, setErrorMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   const structuralSpectrumOptions = [
-    "Cement",
-    "Ready Mix Concrete",
     "Bricks and Blocks",
-    "Structural Steel",
-    "TMT Bars",
-    "Roofing Solutions",
-    "Waterproofing Chemicals and Adhesives",
-    "Paints and Coatings",
+    "Cement",
     "Elevator",
     "Facade",
     "Formwork",
-    "PEB Structure",
     "Glass Facade",
+    "Paints and Coatings",
+    "PEB Structure",
     "Plumbing and Pipes",
+    "Ready Mix Concrete",
+    "Roofing Solutions",
+    "Structural Steel",
+    "TMT Bars",
+    "Waterproofing Chemicals and Adhesives",
   ];
 
   const fetchVisitorsByStructuralSpectrum = async (page, limit, option) => {
@@ -99,11 +100,53 @@ function StructuralSpectrum() {
     );
   };
 
+  const downloadStructuralSpectrum = (e) => {
+    e.preventDefault(); // This is the crucial line to add
+
+    const token = localStorage.getItem("token");
+
+    fetch(`${API_URL}/api/form/visitors/export/structural-spectrum`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to download Structural Spectrum Excel");
+        }
+        return res.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `structural_spectrum.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.error("Excel download error:", err);
+      });
+  };
+
   return (
     <div className="container-fluid mt-4">
       <h1 className="mb-4 text-center fw-bold text-uppercase heading">
         Structural Spectrum
       </h1>
+
+      <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
+        <button
+          type="button" // Add this attribute
+          onClick={downloadStructuralSpectrum}
+          className="btn excel-btn fw-bold text-uppercase"
+        >
+          <IoMdDownload /> STRUCTURAL SPECTRUM EXCEL
+        </button>
+      </form>
 
       <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
         <Link to="/visitors" className="btn glow-btn fw-bold text-uppercase">
@@ -127,7 +170,7 @@ function StructuralSpectrum() {
       <div className="row">
         {/* LEFT SIDE FILTERS */}
         <div
-          className="col-md-3"
+          className="col-md-2"
           style={{ maxHeight: "85vh", overflowY: "auto" }}
         >
           <h5 className="fw-bold mb-3">SELECT OPTION</h5>
@@ -151,7 +194,7 @@ function StructuralSpectrum() {
         </div>
 
         {/* RIGHT SIDE TABLE */}
-        <div className="col-md-9">
+        <div className="col-md-10">
           {/* Pagination Controls */}
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>

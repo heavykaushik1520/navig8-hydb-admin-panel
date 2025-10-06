@@ -2,7 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
-import { FaEdit } from "react-icons/fa";
+import { FaEdit  } from "react-icons/fa";
+import { IoMdDownload } from "react-icons/io";
 
 function Visitors() {
   const { logout } = useAuth();
@@ -127,6 +128,41 @@ function Visitors() {
     }
   };
 
+  // eslint-disable-next-line no-unused-vars
+  const downloadExcel = (day, event) => {
+    // Prevent the form from submitting and reloading the page
+    event.preventDefault();
+
+    const token = localStorage.getItem("token");
+
+    // 👇 Create a hidden link to trigger file download with auth
+    fetch(`${API_URL}/api/form/export/${day}`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to download Excel");
+        }
+        return res.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `visitors_${day}.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.error("Excel download error:", err);
+      });
+  };
+
   return (
     <div className="container mt-4">
       <h1 className="mb-3 text-center fw-bold heading">
@@ -156,6 +192,24 @@ function Visitors() {
         </Link>
       </form>
 
+      <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
+        <button
+          onClick={(event) => downloadExcel("day1", event)}
+          type="button"
+          className="btn excel-btn fw-bold text-uppercase"
+        >
+          <IoMdDownload /> Day 1 EXCEL
+        </button>
+
+        <button
+          onClick={(event) => downloadExcel("day2", event)}
+          type="button"
+          className="btn excel-btn fw-bold text-uppercase"
+        >
+          <IoMdDownload /> Day 2 EXCEL
+        </button>
+      </form>
+
       <form
         className="d-flex justify-content-center mb-3 search-bar"
         onSubmit={handleSearchSubmit}
@@ -177,6 +231,7 @@ function Visitors() {
           className="form-select w-auto"
           value={eventDay}
           onChange={(e) => setEventDay(e.target.value)}
+          onClick={() => setSearchQuery("")}
         >
           <option value="Day1">Day 1</option>
           <option value="Day2">Day 2</option>
@@ -261,7 +316,7 @@ function Visitors() {
           <table className="table table-striped table-bordered table-hover">
             <thead className=" thead-bg">
               <tr>
-                <th className="thead-bg">Action</th> {/* New Action column */}
+                <th className="thead-bg">Action</th>
                 <th className="thead-bg">Image</th>
                 <th className="w-200 thead-bg">Visitor Profile</th>
                 <th className="w-200 thead-bg">Visitor Profile Other</th>
@@ -365,7 +420,7 @@ function Visitors() {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="25" className="text-center">
+                  <td colSpan="25" className="text-start">
                     No visitors found
                   </td>
                 </tr>

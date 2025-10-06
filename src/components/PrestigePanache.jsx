@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { IoMdDownload } from "react-icons/io";
 
 function PrestigePanache() {
   const { logout } = useAuth();
@@ -14,48 +15,49 @@ function PrestigePanache() {
     currentPage: 1,
     itemsPerPage: 10,
   });
-  const [selectedOption, setSelectedOption] = useState("Marble");
+  const [selectedOption, setSelectedOption] = useState("ACP Panels");
   const [errorMessage, setErrorMessage] = useState("");
 
   const API_URL = import.meta.env.VITE_API_URL;
 
   const prestigeOptions = [
-    "Marble",
-    "Tiles",
-    "Quartz",
-    "Terrazzo",
-    "Wooden Flooring",
-    "Laminate",
-    "Rugs and Carpet",
+    "ACP Panels",
+    "Aluminum Doors and Windows",
     "Artefacts",
-    "Sculptures",
+    "Curtain Wall Systems",
     "Decorative Cladding",
-    "Stone Cladding",
+    "Drones",
+    "False Ceiling",
     "Fencing",
     "Garden and Outdoor Furniture",
+    "Hardware and Fittings",
     "Kitchen Appliances",
+    "Laminate",
+    "Lighting",
     "Luxury Furniture",
-    "Wooden Furniture",
     "Luxury Lighting",
+    "Marble",
     "Mattress",
+    "Modular Kitchen and Wardrobe",
+    "Mosaic",
     "Office Furniture",
+    "Pergolas and Gazebos",
+    "Quartz",
+    "Railing and Balustrade",
+    "Rugs and Carpet",
+    "Sculptures",
+    "Shading and Louvers",
+    "Stone Cladding",
     "Swimming Pools",
     "Switches and Sockets",
-    "Wallpaper",
-    "Wooden Doors",
+    "Terrazzo",
+    "Tiles",
     "UPVC Doors and Windows",
-    "Aluminum Doors and Windows",
-    "Curtain Wall Systems",
-    "ACP Panels",
-    "Shading and Louvers",
-    "Railing and Balustrade",
-    "False Ceiling",
-    "Modular Kitchen and Wardrobe",
-    "Hardware and Fittings",
+    "Wallpaper",
     "Wellness",
-    "Lighting",
-    "Drones",
-    "Pergolas and Gazebos",
+    "Wooden Doors",
+    "Wooden Flooring",
+    "Wooden Furniture",
   ];
 
   const fetchVisitorsByPrestige = async (page, limit, option) => {
@@ -117,11 +119,53 @@ function PrestigePanache() {
     fetchVisitorsByPrestige(page, pagination.itemsPerPage, selectedOption);
   };
 
+  const downloadPrestigeAndPanacheExcel = (e) => {
+    e.preventDefault(); // This is the crucial line to add
+
+    const token = localStorage.getItem("token");
+
+    fetch(`${API_URL}/api/form/visitors/export/prestige-panache`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to download Prestige and Panache Excel");
+        }
+        return res.blob();
+      })
+      .then((blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `prestige_and_panache.xlsx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+      })
+      .catch((err) => {
+        console.error("Excel download error:", err);
+      });
+  };
+
   return (
     <div className="container-fluid mt-4">
       <h1 className="mb-4 text-center fw-bold text-uppercase heading">
         Prestige & Panache
       </h1>
+
+      <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
+        <button
+          type="button" // Add this attribute
+          onClick={downloadPrestigeAndPanacheExcel}
+          className="btn excel-btn fw-bold text-uppercase"
+        >
+          <IoMdDownload /> PRESTIGE AND PANACHE EXCEL
+        </button>
+      </form>
 
       <form className="d-flex flex-wrap justify-content-center gap-3 mb-3 search-bar">
         <Link to="/visitors" className="btn glow-btn fw-bold text-uppercase">
@@ -145,7 +189,7 @@ function PrestigePanache() {
       <div className="row">
         {/* LEFT SIDE FILTERS */}
         <div
-          className="col-md-3 sticky-sidebar"
+          className="col-md-2 sticky-sidebar"
           // style={{ maxHeight: "85vh", overflowY: "auto" }}
         >
           <h5 className="fw-bold mb-3">SELECT OPTION</h5>
@@ -169,7 +213,7 @@ function PrestigePanache() {
         </div>
 
         {/* RIGHT SIDE TABLE */}
-        <div className="col-md-9">
+        <div className="col-md-10">
           {/* Pagination Controls */}
           <div className="d-flex justify-content-between align-items-center mb-3">
             <div>
